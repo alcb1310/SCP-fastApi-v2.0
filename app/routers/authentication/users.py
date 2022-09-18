@@ -5,7 +5,7 @@ from fastapi import status, HTTPException, Depends, APIRouter
 from psycopg2.extras import register_uuid
 from sqlalchemy.orm import Session
 
-from ... import schemas, models, utils
+from ... import schemas, models, utils, oauth2
 from ...database import get_db
 
 router = APIRouter(
@@ -15,10 +15,11 @@ router = APIRouter(
 
 
 @router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.UserResponse])
-async def get_all_users(db: Session = Depends(get_db)):
+async def get_all_users(db: Session = Depends(get_db), current_user=Depends(oauth2.get_current_user)):
     """
     Retrieves all the users
     """
+    print(current_user)
     users = db.query(models.User).all()
 
     return users
