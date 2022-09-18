@@ -1,7 +1,6 @@
 import uuid
-from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class CompanyBase(BaseModel):
@@ -11,6 +10,22 @@ class CompanyBase(BaseModel):
 
 
 class CompanyResponse(CompanyBase):
+    uuid: uuid.UUID
+
+    class Config:
+        orm_mode = True
+
+
+class UserBase(BaseModel):
+    email: EmailStr
+    name: str
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class UserResponse(UserBase):
     uuid: uuid.UUID
 
     class Config:

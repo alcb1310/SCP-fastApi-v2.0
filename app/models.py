@@ -8,7 +8,7 @@ from .database import Base
 
 
 class Company(Base):
-    __tablename__ = "company"
+    __tablename__ = "companies"
 
     uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     ruc = Column(String, nullable=False, unique=True)
@@ -16,3 +16,12 @@ class Company(Base):
     employees = Column(Integer, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
+
+class User(Base):
+    __tablename__ = "users"
+
+    uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=False)
+    password = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
