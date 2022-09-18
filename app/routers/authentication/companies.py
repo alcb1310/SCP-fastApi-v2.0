@@ -8,10 +8,13 @@ from sqlalchemy.orm import Session
 from ... import schemas, models
 from ...database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/v1.0/companies",
+    tags=["Companies"]
+)
 
 
-@router.get("/api/v1.0/companies/", status_code=status.HTTP_200_OK, response_model=List[schemas.CompanyResponse])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.CompanyResponse])
 async def get_all_companies(db: Session = Depends(get_db)):
     """
     Returns a list of all the companies registered
@@ -21,7 +24,7 @@ async def get_all_companies(db: Session = Depends(get_db)):
     return companies
 
 
-@router.get("/api/v1.0/companies/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.CompanyResponse)
+@router.get("/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.CompanyResponse)
 async def get_one_company(uuid_str: uuid.UUID, db: Session = Depends(get_db)):
     """
     Given the uuid of a company, returns the company data
@@ -33,7 +36,7 @@ async def get_one_company(uuid_str: uuid.UUID, db: Session = Depends(get_db)):
     return company
 
 
-@router.post("/api/v1.0/companies/", status_code=status.HTTP_201_CREATED, response_model=schemas.CompanyResponse)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.CompanyResponse)
 async def new_company(company: schemas.CompanyBase, db: Session = Depends(get_db)):
     """
     Creates a new company
@@ -54,7 +57,7 @@ async def new_company(company: schemas.CompanyBase, db: Session = Depends(get_db
     return created_company
 
 
-@router.put("/api/v1.0/companies/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.CompanyResponse)
+@router.put("/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.CompanyResponse)
 async def update_company(uuid_str: uuid.UUID, company: schemas.CompanyBase, db: Session = Depends(get_db)):
     """
     When the user sends an updated company values, it updates the database

@@ -8,10 +8,13 @@ from sqlalchemy.orm import Session
 from ... import schemas, models, utils
 from ...database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/v1.0/users",
+    tags=["Users"]
+)
 
 
-@router.get("/api/v1.0/users", status_code=status.HTTP_200_OK, response_model=List[schemas.UserResponse])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[schemas.UserResponse])
 async def get_all_users(db: Session = Depends(get_db)):
     """
     Retrieves all the users
@@ -21,7 +24,7 @@ async def get_all_users(db: Session = Depends(get_db)):
     return users
 
 
-@router.get("/api/v1.0/users/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.UserResponse)
+@router.get("/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.UserResponse)
 async def get_one_user(uuid_str: uuid.UUID, db: Session = Depends(get_db)):
     """
     Get the information of one user
@@ -34,14 +37,14 @@ async def get_one_user(uuid_str: uuid.UUID, db: Session = Depends(get_db)):
     return user
 
 
-@router.post("/api/v1.0/users", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     """
     Creates a new user
     """
 
     # hash the password
-    hashed_password = utils.hash(user.password)
+    hashed_password = utils.hash_password(user.password)
     user.password = hashed_password
     register_uuid()
     uuid_entry = uuid.uuid4()
