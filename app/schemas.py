@@ -34,8 +34,8 @@ class CompanyCreate(UserCreate, CompanyBase):
 
 
 class UserResponse(UserBase):
-    uuid: uuid.UUID
     company_id: uuid.UUID
+    uuid: uuid.UUID
 
     class Config:
         orm_mode = True

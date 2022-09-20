@@ -64,7 +64,7 @@ async def new_company(company: schemas.CompanyCreate, db: Session = Depends(get_
     try:
         db.add(created_user)
         db.commit()
-    except Exception as error:
+    except Exception:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
 
     return created_company
