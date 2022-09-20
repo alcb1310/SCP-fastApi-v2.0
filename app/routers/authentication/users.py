@@ -19,18 +19,17 @@ async def get_all_users(db: Session = Depends(get_db), current_user=Depends(oaut
     """
     Retrieves all the users
     """
-    print(current_user)
-    users = db.query(models.User).all()
+    users = db.query(models.User).filter(models.User.company_id == current_user.company_uuid).all()
 
     return users
 
 
 @router.get("/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.UserResponse)
-async def get_one_user(uuid_str: uuid.UUID, db: Session = Depends(get_db)):
+async def get_one_user(uuid_str: uuid.UUID, db: Session = Depends(get_db), current_user=Depends(oauth2.get_current_user)):
     """
     Get the information of one user
     """
-    user = db.query(models.User).filter(models.User.uuid == uuid_str).one_or_none()
+    user = db.query(models.User).filter(models.User.company_id == current_user.company_uuid).filter(models.User.uuid == uuid_str).one_or_none()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User with uuid {uuid_str} not found")
@@ -39,7 +38,7 @@ async def get_one_user(uuid_str: uuid.UUID, db: Session = Depends(get_db)):
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserResponse)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+async def create_user(user: schemas.UserPost, db: Session = Depends(get_db), current_user=Depends(oauth2.get_current_user)):
     """
     Creates a new user
     """
@@ -51,6 +50,7 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     uuid_entry = uuid.uuid4()
     user_dict = user.dict()
     user_dict["uuid"] = uuid_entry
+    user_dict["company_id"] = current_user.company_uuid
     created_user = models.User(**user_dict)
     try:
         db.add(created_user)

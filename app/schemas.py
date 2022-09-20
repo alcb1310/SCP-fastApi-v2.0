@@ -25,11 +25,21 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserPost(UserCreate):
+    company_id: uuid.UUID
+
+
+class CompanyCreate(UserCreate, CompanyBase):
+    username: str
+
+
 class UserResponse(UserBase):
     uuid: uuid.UUID
+    company_id: uuid.UUID
 
     class Config:
         orm_mode = True
+
 
 class UserLogin(BaseModel):
     email: EmailStr
@@ -43,3 +53,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     user_uuid: uuid.UUID
+    company_uuid: uuid.UUID

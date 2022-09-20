@@ -18,9 +18,11 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Credentials")
 
     #create token
-    uuid_str = str(user.uuid)
+    user_uuid = str(user.uuid)
+    company_uuid = str(user.company_id)
     token = oauth2.create_access_token({
-        "user_uuid": uuid_str
+        "user_uuid": user_uuid,
+        "company_uuid": company_uuid
     })
 
     return {"access_token": token, "token_type": "bearer"}
