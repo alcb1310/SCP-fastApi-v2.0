@@ -1,12 +1,11 @@
-import uuid
 from datetime import datetime, timedelta
 
-from jose import JWTError, jwt
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from .config import settings
+from jose import JWTError, jwt
 
 from . import schemas
+from .config import settings
 
 oauth2_schema = OAuth2PasswordBearer(tokenUrl="login")
 # to get a string like this run:
@@ -32,8 +31,8 @@ def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, ALGORITHM)
 
-        user_uuid: uuid.UUID = payload.get("user_uuid")
-        company_uuid: uuid.UUID = payload.get("company_uuid")
+        user_uuid: str = payload.get("user_uuid")
+        company_uuid: str = payload.get("company_uuid")
 
         if user_uuid is None or company_uuid is None:
             raise credentials_exception

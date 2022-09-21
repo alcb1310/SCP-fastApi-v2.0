@@ -10,7 +10,7 @@ class CompanyBase(BaseModel):
 
 
 class CompanyResponse(CompanyBase):
-    uuid: uuid.UUID
+    uuid: str
 
     class Config:
         orm_mode = True
@@ -26,7 +26,7 @@ class UserCreate(UserBase):
 
 
 class UserPost(UserCreate):
-    company_id: uuid.UUID
+    company_id: str
 
 
 class CompanyCreate(UserCreate, CompanyBase):
@@ -34,8 +34,8 @@ class CompanyCreate(UserCreate, CompanyBase):
 
 
 class UserResponse(UserBase):
-    company_id: uuid.UUID
-    uuid: uuid.UUID
+    company_id: str
+    uuid: str
 
     class Config:
         orm_mode = True
@@ -52,5 +52,5 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    user_uuid: uuid.UUID
-    company_uuid: uuid.UUID
+    user_uuid: str
+    company_uuid: str

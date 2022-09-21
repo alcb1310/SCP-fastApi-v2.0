@@ -20,6 +20,7 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     #create token
     user_uuid = str(user.uuid)
     company_uuid = str(user.company_id)
+
     token = oauth2.create_access_token({
         "user_uuid": user_uuid,
         "company_uuid": company_uuid
