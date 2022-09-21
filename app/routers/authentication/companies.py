@@ -19,7 +19,7 @@ async def get_all_companies(db: Session = Depends(get_db), current_user=Depends(
     """
     Returns a list of all the companies registered
     """
-    companies = db.query(models.Company).filter(models.Company.uuid == current_user.company_uuid).all()
+    companies = db.query(models.Company).filter(models.Company.uuid == str(current_user.company_uuid)).all()
 
     return companies
 
@@ -29,8 +29,7 @@ async def new_company(company: schemas.CompanyCreate, db: Session = Depends(get_
     """
     Creates a new company
     """
-    register_uuid()
-    uuid_entry = uuid.uuid4()
+    uuid_entry = str(uuid.uuid4())
     company_dict = company.dict()
     company_dict["uuid"] = uuid_entry
 
@@ -43,12 +42,11 @@ async def new_company(company: schemas.CompanyCreate, db: Session = Depends(get_
     try:
         db.add(created_company)
         db.commit()
-        db.refresh(created_company)
     except Exception as error:
         print(error)
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Company already exists")
 
-    uuid_entry = uuid.uuid4()
+    uuid_entry = str(uuid.uuid4())
     user_dict = company.dict()
     user_dict["uuid"] = uuid_entry
     user_dict["company_id"] = company_dict["uuid"]
@@ -64,9 +62,10 @@ async def new_company(company: schemas.CompanyCreate, db: Session = Depends(get_
     try:
         db.add(created_user)
         db.commit()
-    except Exception as error:
+    except Exception:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User already exists")
 
+    db.refresh(created_company)
     return created_company
 
 
