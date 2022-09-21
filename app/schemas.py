@@ -1,4 +1,4 @@
-import uuid
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -34,7 +34,16 @@ class CompanyCreate(UserCreate, CompanyBase):
 
 
 class UserResponse(UserBase):
-    company_id: str
+    # company_id: str
+    uuid: str
+
+    company: CompanyResponse
+
+    class Config:
+        orm_mode = True
+
+
+class UserChild(UserBase):
     uuid: str
 
     class Config:
@@ -54,3 +63,41 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     user_uuid: str
     company_uuid: str
+
+
+class ProjectBase(BaseModel):
+    name: str
+
+
+class ProjectResponse(ProjectBase):
+    uuid: str
+
+    user: UserChild
+    company: CompanyResponse
+
+    class Config:
+        orm_mode = True
+
+
+class SupplierUpdate(BaseModel):
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_email: Optional[str] = None
+
+
+class SupplierBase(SupplierUpdate):
+    supplier_id: str
+    name: str
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_email: Optional[str] = None
+
+
+class SupplierResponse(SupplierBase):
+    uuid: str
+
+    user: UserChild
+    company: CompanyResponse
+
+    class Config:
+        orm_mode = True

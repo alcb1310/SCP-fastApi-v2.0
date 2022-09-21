@@ -2,7 +2,6 @@ import uuid
 from typing import List
 
 from fastapi import status, HTTPException, Depends, APIRouter
-from psycopg2.extras import register_uuid
 from sqlalchemy.orm import Session
 
 from ... import schemas, models, utils, oauth2
@@ -56,7 +55,7 @@ async def new_company(company: schemas.CompanyCreate, db: Session = Depends(get_
         email=user_dict["email"],
         company_id=company_dict["uuid"],
         password=user_dict["password"],
-        name=user_dict["name"]
+        name=user_dict["username"]
     )
 
     try:
@@ -70,7 +69,12 @@ async def new_company(company: schemas.CompanyCreate, db: Session = Depends(get_
 
 
 @router.put("/{uuid_str}", status_code=status.HTTP_200_OK, response_model=schemas.CompanyResponse)
-async def update_company(uuid_str: uuid.UUID, company: schemas.CompanyBase, db: Session = Depends(get_db)):
+async def update_company(
+        uuid_str: str,
+        company: schemas.CompanyBase,
+        db: Session = Depends(get_db),
+        current_user=Depends(oauth2.get_current_user)
+):
     """
     When the user sends an updated company values, it updates the database
     """
@@ -79,7 +83,6 @@ async def update_company(uuid_str: uuid.UUID, company: schemas.CompanyBase, db: 
     if not company_to_update:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Company with uuid: {uuid_str} not found")
 
-    print(company.dict())
     company_query.update(company.dict())
     db.commit()
 

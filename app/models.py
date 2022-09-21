@@ -28,3 +28,33 @@ class User(Base):
     created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
 
     company = relationship("Company")
+
+
+class Project(Base):
+    __tablename__ = "projects"
+
+    uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    company_id = Column(UUID(as_uuid=True), ForeignKey("companies.uuid", ondelete="RESTRICT"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.uuid", ondelete="RESTRICT"), nullable=False)
+    name = Column(String, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+    company = relationship("Company")
+    user = relationship("User")
+
+
+class Supplier(Base):
+    __tablename__ = "suppliers"
+
+    uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    company_id = Column(UUID(as_uuid=True), ForeignKey("companies.uuid", ondelete="RESTRICT"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.uuid", ondelete="RESTRICT"), nullable=False)
+    supplier_id = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    contact_name = Column(String)
+    contact_phone = Column(String)
+    contact_email = Column(String)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+    company = relationship("Company")
+    user = relationship("User")
