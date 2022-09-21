@@ -65,9 +65,9 @@ def update_a_project(uuid_str: str, project: schemas.ProjectBase, db: Session = 
         filter(models.Project.company_id == current_user.company_uuid).\
         filter(models.Project.uuid == uuid_str)
 
-    project = project_query.one_or_none()
+    project_data = project_query.one_or_none()
 
-    if not project:
+    if not project_data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Project with id: {uuid_str} doesn't exist")
 
     project_query.update(project.dict())

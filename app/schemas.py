@@ -1,4 +1,4 @@
-import uuid
+from typing import Optional
 
 from pydantic import BaseModel, EmailStr
 
@@ -70,6 +70,30 @@ class ProjectBase(BaseModel):
 
 
 class ProjectResponse(ProjectBase):
+    uuid: str
+
+    user: UserChild
+    company: CompanyResponse
+
+    class Config:
+        orm_mode = True
+
+
+class SupplierUpdate(BaseModel):
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_email: Optional[str] = None
+
+
+class SupplierBase(SupplierUpdate):
+    supplier_id: str
+    name: str
+    contact_name: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_email: Optional[str] = None
+
+
+class SupplierResponse(SupplierBase):
     uuid: str
 
     user: UserChild
