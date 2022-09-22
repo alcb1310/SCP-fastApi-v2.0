@@ -5,7 +5,7 @@
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 \
-![50%](https://progress-bar.dev/25)
+![50%](https://progress-bar.dev/30)
 ## Your budgeting api focused in construction companies
 ## Overview
 This is the backend of SCP, it is build in Python using fast-api.
@@ -23,6 +23,11 @@ This is the backend of SCP, it is build in Python using fast-api.
 > Create invoices\
 > Updates de budget 
 <hr style="border: 2px solid gray;" />
+
+## Database structure
+
+### <center>Entity Relationship Diagram</center>
+![Entity Relationship Diagram](./images/entity-relationship.png)
 
 ## Future version features
 
