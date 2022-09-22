@@ -63,3 +63,6 @@ work
 - **ALGORITHM**: It's the algorithm employed to sign the tokens
 - **ACCESS_TOKEN_EXPIRE_MINUTES**: It's the time in minutes that will take for the token to expire
 
+[<img src="./images/icons8-linkedin-2-48.png" alt="LinkedIn" width="25" />](https://www.linkedin.com/in/andres-court-benitez-11ab6613b)
+[<img src="./images/icons8-twitter-48.png" alt="Twitter" width="25" />](https://https://twitter.com/alcb1310)
+[<img src="./images/icons8-github-48.png" alt="Git Hub" width="25" />](https://https://github.com/alcb1310)
