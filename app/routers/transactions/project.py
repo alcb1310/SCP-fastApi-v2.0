@@ -22,9 +22,9 @@ def get_all_projects(db: Session = Depends(get_db), current_user=Depends(oauth2.
 
 @router.get("/{uuid_str}", response_model=schemas.ProjectResponse, status_code=status.HTTP_200_OK)
 def get_one_project(uuid_str: str, db: Session = Depends(get_db), current_user=Depends(oauth2.get_current_user)):
-    project = db.query(models.Project).\
-        filter(models.Project.company_id == current_user.company_uuid).\
-        filter(models.Project.uuid == uuid_str).\
+    project = db.query(models.Project). \
+        filter(models.Project.company_id == current_user.company_uuid). \
+        filter(models.Project.uuid == uuid_str). \
         one_or_none()
 
     if not project:
@@ -36,9 +36,8 @@ def get_one_project(uuid_str: str, db: Session = Depends(get_db), current_user=D
 @router.post("/", response_model=schemas.ProjectResponse, status_code=status.HTTP_201_CREATED)
 def create_a_project(project: schemas.ProjectBase, db: Session = Depends(get_db),
                      current_user=Depends(oauth2.get_current_user)
-                ):
+                     ):
     uuid_str = str(uuid.uuid4())
-    print(project.name)
 
     project_dict = models.Project(
         name=project.name,
@@ -59,10 +58,10 @@ def create_a_project(project: schemas.ProjectBase, db: Session = Depends(get_db)
 
 
 @router.put("/{uuid_str}", response_model=schemas.ProjectResponse, status_code=status.HTTP_200_OK)
-def update_a_project(uuid_str: str, project: schemas.ProjectBase, db: Session = Depends(get_db), current_user=Depends(oauth2.get_current_user)):
-
-    project_query = db.query(models.Project).\
-        filter(models.Project.company_id == current_user.company_uuid).\
+def update_a_project(uuid_str: str, project: schemas.ProjectBase, db: Session = Depends(get_db),
+                     current_user=Depends(oauth2.get_current_user)):
+    project_query = db.query(models.Project). \
+        filter(models.Project.company_id == current_user.company_uuid). \
         filter(models.Project.uuid == uuid_str)
 
     project_data = project_query.one_or_none()

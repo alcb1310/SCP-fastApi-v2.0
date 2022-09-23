@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Float, Date
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
@@ -84,8 +84,8 @@ class ProjectBudget(Base):
     uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
     company_id = Column(UUID(as_uuid=True), ForeignKey("companies.uuid", ondelete="RESTRICT"), nullable=False)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.uuid", ondelete="RESTRICT"), nullable=False)
-    budget_item_id = Column(UUID(as_uuid=True), ForeignKey("budget_item.uuid", ondelete="RESTRICT"), nullable=False)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("project.uuid", ondelete="RESTRICT"), nullable=False)
+    budget_item_id = Column(UUID(as_uuid=True), ForeignKey("budget_items.uuid", ondelete="RESTRICT"), nullable=False)
+    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.uuid", ondelete="RESTRICT"), nullable=False)
     initial_quantity = Column(Float())
     initial_cost = Column(Float())
     initial_total = Column(Float(), nullable=False)
@@ -99,5 +99,24 @@ class ProjectBudget(Base):
 
     company = relationship("Company")
     user = relationship("User")
-    budget_item = relationship("BudgetItem")
+    budget_item = relationship("BudgetItems")
     project = relationship("Project")
+
+
+class Invoice(Base):
+    __tablename__ = "invoices"
+
+    uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    company_id = Column(UUID(as_uuid=True), ForeignKey("companies.uuid", ondelete="RESTRICT"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.uuid", ondelete="RESTRICT"), nullable=False)
+    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.uuid", ondelete="RESTRICT"), nullable=False)
+    supplier_id = Column(UUID(as_uuid=True), ForeignKey("suppliers.uuid", ondelete="RESTRICT"), nullable=False)
+    invoice_number = Column(String, nullable=False)
+    invoice_date = Column(Date, nullable=False)
+    invoice_total = Column(Float, nullable=False)
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+    company = relationship("Company")
+    user = relationship("User")
+    project = relationship("Project")
+    supplier = relationship("Supplier")
