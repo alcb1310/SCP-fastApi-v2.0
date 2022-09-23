@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
@@ -58,3 +58,21 @@ class Supplier(Base):
 
     company = relationship("Company")
     user = relationship("User")
+
+
+class BudgetItems(Base):
+    __tablename__ = "budget_items"
+
+    uuid = Column(UUID(as_uuid=True), primary_key=True, nullable=False)
+    company_id = Column(UUID(as_uuid=True), ForeignKey("companies.uuid", ondelete="RESTRICT"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.uuid", ondelete="RESTRICT"), nullable=False)
+    code = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    accumulates = Column(Boolean, nullable=False)
+    level = Column(Integer, nullable=False)
+    parent_id = Column(UUID(as_uuid=True), ForeignKey("budget_items.uuid", ondelete="RESTRICT"))
+    created_at = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text('now()'))
+
+    company = relationship("Company")
+    user = relationship("User")
+    parent = relationship("BudgetItems")
