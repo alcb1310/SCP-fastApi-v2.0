@@ -5,10 +5,15 @@ from .database import engine
 from .routers.authentication import companies, users, auth
 from .routers.transactions import project
 from .routers.parameters import suppliers
+from .config import settings
 
 models.Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.project_name,
+    version=settings.project_version,
+    description=settings.project_description
+)
 
 app.include_router(auth.router)
 app.include_router(companies.router)
