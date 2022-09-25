@@ -116,7 +116,7 @@ class BudgetItemResponse(BudgetItemBase):
 
     user: UserChild
     company: CompanyResponse
-    parent: Optional[BudgetItemBase] = None
+    # parent: Optional[BudgetItemBase] = None
 
     class Config:
         orm_mode = True
