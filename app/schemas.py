@@ -101,3 +101,22 @@ class SupplierResponse(SupplierBase):
 
     class Config:
         orm_mode = True
+
+
+class BudgetItemBase(BaseModel):
+    code: str
+    name: str
+    accumulates: bool
+    level: Optional[int] = None
+    parent_id: Optional[str] = None
+
+
+class BudgetItemResponse(BudgetItemBase):
+    uuid: str
+
+    user: UserChild
+    company: CompanyResponse
+    # parent: Optional[BudgetItemBase] = None
+
+    class Config:
+        orm_mode = True

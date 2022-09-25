@@ -1,7 +1,6 @@
 from pydantic import BaseSettings
 
 
-# SQLALCHEMY_DATABASE_URL = "postgresql://postgres:root@localhost:5432/scp_final"
 class Settings(BaseSettings):
     database_hostname: str
     database_username: str
@@ -12,6 +11,10 @@ class Settings(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
+
+    project_name: str
+    project_description: str
+    project_version: str
 
     class Config:
         env_file = ".env"
