@@ -5,7 +5,7 @@
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 \
-![50%](https://progress-bar.dev/30)
+![50%](https://progress-bar.dev/35)
 ## Your budgeting api focused in construction companies
 ## Overview
 This is the backend of SCP, it is build in Python using fast-api.
@@ -62,6 +62,10 @@ work
 - **SECRET_KEY**: It's the secret key that we will use to sign the tokens
 - **ALGORITHM**: It's the algorithm employed to sign the tokens
 - **ACCESS_TOKEN_EXPIRE_MINUTES**: It's the time in minutes that will take for the token to expire
+
+- **PROJECT_NAME**: The name of the project, it should say SCP
+- **PROJECT_DESCRIPTION**: The description of the project, it should say Budgeting application focused on construction companies
+- **PROJECT_VERSION**: Currently at version 1.0.0
 
 [<img src="./images/icons8-linkedin-2-48.png" alt="LinkedIn" width="25" />](https://www.linkedin.com/in/andres-court-benitez-11ab6613b)
 [<img src="./images/icons8-twitter-48.png" alt="Twitter" width="25" />](https://twitter.com/alcb1310)
