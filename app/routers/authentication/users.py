@@ -42,12 +42,17 @@ async def create_user(user: schemas.UserPost, db: Session = Depends(get_db), cur
     """
     Creates a new user
     """
-
+    company = db.query(models.Company).filter(models.Company.uuid == current_user.company_uuid).one_or_none()
+    all_users = db.query(models.User).filter(models.User.company_id == current_user.company_uuid)
+    # print(all_users.count())
+    if all_users.count() == company.employees:
+        raise HTTPException(status_code=status.HTTP_402_PAYMENT_REQUIRED, detail=f"Have reached the maximum amount({company.employees}) of user accounts")
     # hash the password
+    
     hashed_password = utils.hash_password(user.password)
     user.password = hashed_password
     register_uuid()
-    uuid_entry = uuid.uuid4()
+    uuid_entry = str(uuid.uuid4())
     user_dict = user.dict()
     user_dict["uuid"] = uuid_entry
     user_dict["company_id"] = current_user.company_uuid
