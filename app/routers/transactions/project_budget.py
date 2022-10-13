@@ -114,7 +114,73 @@ def create_project_budget(
     return to_create
 
 
+@router.put(
+    "/{uuid_str}",
+    status_code=status.HTTP_200_OK,
+    response_model=schemas.ProjectBudgetResponse,
+    responses={
+        401: {
+            "detail": "Not authenticated"
+        },
+        404: {
+            "detail": "Budget for project <project_id> with item <budget_item_id> not found"
+        },
+        406: {
+            "detail": "Can not update an item that is not in the project"
+        }
+    }
+)
+def update_project_budget(
+    uuid_str: str,
+    budget: schemas.ProjectBudget,
+    db: Session = Depends(get_db),
+    current_user=Depends(oauth2.get_current_user)
+):
+    """
+    Updates a budget item within a project, on success it returns 200 OK on Exception it returns 404 Not Found
+
+    - **project_id** (string) Each project budget must be associated to a project
+    - **budget_item_id** (string) Each project budget must be associated to a budget item
+    - **quantity** (float) Indicates the amount of the budget item is budgeted
+    - **cost** (float) Indicates the cost of each unit of the budget item
+
+    """
+    project_budget_query = db.query(models.ProjectBudget).\
+        filter(models.ProjectBudget.company_id == current_user.company_uuid).\
+        filter(models.ProjectBudget.uuid == uuid_str)
+
+    project_budget = project_budget_query.one_or_none()
+
+    if not project_budget:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Project budget with id ${uuid_str} does not exist")
+
+    total = budget.cost * budget.quantity
+    dif = total - project_budget["to_spend_total"]
+
+    to_update = {
+        "to_spend_quantity": budget.quantity,
+        "to_spend_cost": budget.cost,
+        "to_spend_total": project_budget["to_spend_total"] + dif,
+        "updated_budget": project_budget["updated_budget"] + dif
+    }
+
+    try:
+        project_budget_query.update(to_update)
+        update_parent_budget(dif, db, budget, current_user)
+    except:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                            detail=f"Can not update an item that is not in the project")
+
+    db.commit()
+    project_budget = project_budget_query.one_or_none()
+    return project_budget
+
+
 # Methods that supports the api calls
+
+
 def create_parent_budget(budget, db: Session, current_user):
     """
     Given a budget dictionary defined by 
@@ -164,3 +230,33 @@ def create_parent_budget(budget, db: Session, current_user):
 
     budget["budget_item_id"] = parent_id
     create_parent_budget(budget, db, current_user)
+
+
+def update_parent_budget(dif: float, db: Session, budget, current_user):
+    budget_item = db.query(models.BudgetItems).\
+        filter(models.BudgetItems.company_id == current_user.company_uuid).\
+        filter(models.BudgetItems.uuid == budget["budget_item_id"]).one()
+    parent_id = budget_item.parent_id
+
+    if parent_id == None:
+        return
+
+    new_project_budget_query = db.query(models.ProjectBudget).filter(models.ProjectBudget.company_id == current_user.company_uuid).filter(
+        models.ProjectBudget.budget_item_id == parent_id).filter(models.ProjectBudget.project_id == budget["project_id"])
+
+    new_project_budget = new_project_budget_query.one_or_none()
+
+    if not new_project_budget:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail=f"Can not update an item that is not in the project"
+        )
+
+    values_to_update = {
+        "to_spend_total": dif + new_project_budget.to_spend_total,
+        "updated_budget": dif + new_project_budget.updated_budget
+    }
+    new_project_budget_query.update(values_to_update)
+
+    budget["budget_item_id"] = parent_id
+    update_parent_budget(dif, db, budget, current_user)
