@@ -27,3 +27,16 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     })
 
     return {"access_token": token, "token_type": "bearer"}
+
+@router.post("/refresh")
+def refresh_user_credentials(current_user=Depends(oauth2.get_current_user)):
+    #create token
+    user_uuid = str(current_user.user_uuid)
+    company_uuid = str(current_user.company_uuid)
+
+    token = oauth2.create_access_token({
+        "user_uuid": user_uuid,
+        "company_uuid": company_uuid
+    })
+
+    return {"access_token": token, "token_type": "bearer"}

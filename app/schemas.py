@@ -26,7 +26,7 @@ class UserCreate(UserBase):
 
 
 class UserPost(UserCreate):
-    company_id: str
+    pass
 
 
 class CompanyCreate(UserCreate, CompanyBase):
@@ -117,6 +117,34 @@ class BudgetItemResponse(BudgetItemBase):
     user: UserChild
     company: CompanyResponse
     # parent: Optional[BudgetItemBase] = None
+
+    class Config:
+        orm_mode = True
+
+
+class ProjectBudget(BaseModel):
+    project_id: str
+    budget_item_id: str
+    quantity: float
+    cost: float
+
+
+class ProjectBudgetResponse(BaseModel):
+    uuid: str
+    initial_quantity: Optional[float] = None
+    initial_cost: Optional[float] = None
+    initial_total: float
+    spent_quantity: Optional[float] = None
+    spent_total: float
+    to_spend_quantity: Optional[float] = None
+    to_spend_cost: Optional[float] = None
+    to_spend_total: float
+    updated_budget: float
+
+    user: UserChild
+    company: CompanyResponse
+    project: ProjectResponse
+    budget_item: BudgetItemResponse
 
     class Config:
         orm_mode = True
